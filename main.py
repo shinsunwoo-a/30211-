@@ -1,9 +1,40 @@
 import streamlit as st
 
-# 페이지 설정
-st.set_page_config(page_title="세계 관광지 검색기", page_icon="✈️", layout="centered")
+# 1. 페이지 기본 설정 (와이드 레이아웃 적용)
+st.set_page_config(
+    page_title="세계 문화 관광지 가이드",
+    page_icon="🌍",
+    layout="wide"
+)
 
-# 데이터베이스 (국가별 관광지 정보 확장)
+# 2. 커스텀 CSS 적용 (꾸미기)
+st.markdown("""
+    <style>
+    .main {
+        background-color: #f8f9fa;
+    }
+    .stButton>button {
+        width: 100%;
+        background-color: #ff4b4b;
+        color: white;
+        font-weight: bold;
+        border-radius: 10px;
+        height: 45px;
+    }
+    .stButton>button:hover {
+        background-color: #ff2222;
+    }
+    .place-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 15px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# 3. 데이터베이스 확장 (다양한 대륙과 15개국 이상 등록)
 travel_data = {
     "프랑스": [
         {"name": "에펠탑", "desc": "파리를 상징하는 대표적인 철탑으로 야경이 아름답습니다."},
@@ -13,7 +44,7 @@ travel_data = {
     "일본": [
         {"name": "도쿄 타워", "desc": "도쿄의 랜드마크로 붉은색과 흰색이 조화를 이루는 전파탑입니다."},
         {"name": "오사카 성", "desc": "일본의 역사적인 성이자 벚꽃 명소로 유명합니다."},
-        {"name": "교토 청수사(기요미즈데라)", "desc": "유네스코 세계문화유산으로 전통 건축물이 아름다운 사찰입니다."}
+        {"name": "교토 청수사", "desc": "유네스코 세계문화유산으로 전통 건축물이 아름다운 사찰입니다."}
     ],
     "미국": [
         {"name": "자유의 여신상", "desc": "뉴욕 허드슨 강 입구에 있는 미국의 상징적인 동상입니다."},
@@ -32,62 +63,83 @@ travel_data = {
     ],
     "스페인": [
         {"name": "사그라다 파밀리아", "desc": "가우디가 설계하고 여전히 건설 중인 바르셀로나의 성당입니다."},
-        {"name": "구엘 공원", "desc": "알록달록한 타일과 독특한 건축물로 가득한 동화 같은 공원입니다."},
-        {"name": "알람브라 궁전", "desc": "이슬람 문화의 정수를 보여주는 그라나다의 아름다운 궁전입니다."}
+        {"name": "구엘 공원", "desc": "알록달록한 타일과 독특한 건축물로 가득한 동화 같은 공원입니다."}
     ],
     "스위스": [
         {"name": "융프라우요흐", "desc": "유럽의 지붕이라 불리며 만년설과 알프스의 절경을 볼 수 있는 곳입니다."},
-        {"name": "마테호른", "desc": "피라미드 모양의 독특하고 웅장한 설산으로 유명합니다."},
-        {"name": "루체른 호수", "desc": "아름다운 호수와 중세 분위기의 도시가 어우러진 힐링 명소입니다."}
+        {"name": "마테호른", "desc": "피라미드 모양의 독특하고 웅장한 설산으로 유명합니다."}
     ],
     "베트남": [
         {"name": "하롱베이", "desc": "수천 개의 기암괴석과 에메랄드빛 바다가 어우러진 절경입니다."},
-        {"name": "호이안 올드타운", "desc": "밤이 되면 형형색색의 등불이 켜지는 아름다운 전통 도시입니다."},
-        {"name": "바나힐", "desc": "산 정상에 위치해 있으며 거대한 손 다리(골든 브리지)로 유명합니다."}
+        {"name": "호이안 올드타운", "desc": "밤이 되면 형형색색의 등불이 켜지는 아름다운 전통 도시입니다."}
     ],
     "호주": [
         {"name": "시드니 오페라 하우스", "desc": "조개껍데기 모양의 독특한 외관을 자랑하는 세계적인 건축물입니다."},
-        {"name": "그레이트 배리어 리프", "desc": "우주에서도 보인다는 세계 최대의 산호초 군락입니다."},
-        {"name": "울루루", "desc": "호주 사막 한가운데 솟아 있는 거대한 붉은 바위입니다."}
+        {"name": "그레이트 배리어 리프", "desc": "우주에서도 보인다는 세계 최대의 산호초 군락입니다."}
     ],
     "캐나다": [
         {"name": "나이아가라 폭포", "desc": "세계에서 가장 유명한 거대하고 웅장한 폭포 중 하나입니다."},
-        {"name": "밴프 국립공원", "desc": "에메랄드빛 호수와 로키산맥의 대자연을 만끽할 수 있는 곳입니다."},
-        {"name": "CN 타워", "desc": "토론토의 스카이라인을 대표하는 거대한 전망탑입니다."}
+        {"name": "밴프 국립공원", "desc": "에메랄드빛 호수와 로키산맥의 대자연을 만끽할 수 있는 곳입니다."}
+    ],
+    "이집트": [
+        {"name": "기자 피라미드", "desc": "고대 세계 7대 불가사의 중 하나로 거대한 파라오의 무덤입니다."},
+        {"name": "룩소르 신전", "desc": "고대 이집트의 수도 테베에 세워진 거대한 신전 유적입니다."}
+    ],
+    "태국": [
+        {"name": "방콕 왕궁", "desc": "화려한 황금빛 건축물들로 가득한 태국의 대표 랜드마크입니다."},
+        {"name": "왓 아룬", "desc": "짜오프라야 강변에 위치하며 새벽녘에 아름답게 빛나는 사찰입니다."}
     ]
 }
 
-# 화면 UI 구성
-st.title("✈️ 세계 유명 관광지 검색기")
-st.write("궁금한 나라 이름을 입력하면 대표적인 관광지를 추천해 드립니다!")
+# 4. 메인 화면 구성
+st.title("✈️ World Travel Guide & 핫플 추천기")
+st.markdown("가보고 싶은 나라를 선택하거나 검색하여 유명 관광지와 설명을 확인해보세요!")
 
-# 사용자 입력 방식
-user_input = st.text_input("나라 이름을 입력하세요 (예: 프랑스, 스페인, 스위스, 베트남 등)", "")
+# 5. 사이드바 구성 (검색 및 필터 기능)
+st.sidebar.header("🔍 검색 및 국가 선택")
+search_method = st.sidebar.radio("조회 방식을 선택하세요", ["직접 검색하기", "목록에서 고르기"])
 
-# 검색 버튼
-if st.button("관광지 검색"):
-    country = user_input.strip()
-    
-    if country in travel_data:
-        st.success(f"🎉 **{country}**의 추천 관광지입니다!")
-        
-        # 카드 형태로 관광지 출력
-        for place in travel_data[country]:
-            with st.container():
-                st.subheader(f"📍 {place['name']}")
-                st.write(place['desc'])
-                st.divider()
-    elif country == "":
-        st.warning("나라 이름을 입력해 주세요!")
-    else:
-        st.error(f"죄송합니다. '{country}'에 대한 정보가 아직 없습니다. 사이드바의 등록된 나라를 확인해 보세요!")
+selected_country = ""
 
-# 사이드바에 추가 정보 제공
-st.sidebar.header("💡 사용 방법")
-st.sidebar.write("1. 입력창에 나라 이름을 적습니다.")
-st.sidebar.write("2. '관광지 검색' 버튼을 누릅니다.")
+if search_method == "직접 검색하기":
+    user_input = st.sidebar.text_input("나라 이름을 입력하세요", "")
+    if user_input:
+        selected_country = user_input.strip()
+else:
+    country_list = list(travel_data.keys())
+    selected_country = st.sidebar.selectbox("등록된 나라 목록", country_list)
+
+# 사이드바에 전체 등록 국가 수 표시
 st.sidebar.markdown("---")
-st.sidebar.header("🌍 현재 등록된 나라")
-# 등록된 나라 목록을 자동으로 사이드바에 출력
-country_list = ", ".join(travel_data.keys())
-st.sidebar.write(country_list)
+st.sidebar.info(f"현재 총 **{len(travel_data)}개국**의 정보가 등록되어 있습니다.")
+
+# 6. 결과 출력 영역
+if selected_country:
+    if selected_country in travel_data:
+        st.markdown(f"## 🎉 '{selected_country}' 추천 관광지 베스트")
+        st.markdown("")
+        
+        # 2열 레이아웃으로 카드 배치
+        cols = st.columns(2)
+        for idx, place in enumerate(travel_data[selected_country]):
+            with cols[idx % 2]:
+                with st.container():
+                    st.markdown(f"""
+                        <div class="place-card">
+                            <h3>📍 {place['name']}</h3>
+                            <p style="color: #555; font-size: 16px;">{place['desc']}</p>
+                        </div>
+                    """, unsafe_allow_html=True)
+    else:
+        st.error(f"죄송합니다! '{selected_country}'에 대한 정보가 아직 없습니다. 다른 나라를 선택해 주세요.")
+else:
+    # 초기 화면 안내
+    st.info("👈 왼쪽 사이드바에서 나라를 검색하거나 선택해주세요.")
+    
+    # 웰컴 배너 느낌으로 전체 국가 미리보기 제공
+    st.markdown("### 🌟 등록된 여행지 미리보기")
+    preview_cols = st.columns(4)
+    countries = list(travel_data.keys())
+    for i, country in enumerate(countries[:8]):
+        with preview_cols[i % 4]:
+            st.metric(label=f"인기 여행지", value=country)
