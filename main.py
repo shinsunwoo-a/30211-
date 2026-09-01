@@ -126,8 +126,8 @@ if selected:
                         <p style="color: #444; font-size: 15px; line-height: 1.5;">{place['desc']}</p>
                     </div>
                 """, unsafe_allow_html=True)
-                # 이미지 출력
-                st.image(place['img'], use_column_width=True, caption=place['name'])
+                # 이미지 출력 (최신 스트림릿 버전 호환 파라미터 적용)
+                st.image(place['img'], use_container_width=True, caption=place['name'])
     else:
         st.error(f"죄송합니다! '{selected}'에 대한 정보가 아직 등록되지 않았습니다.")
 else:
