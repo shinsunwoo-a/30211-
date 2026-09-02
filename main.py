@@ -57,7 +57,6 @@ UN_193_RAW_DATA = [
     {"name": "아르메니아", "region": "아시아", "capital": "예레반", "flag": "🇦🇲", "attractions": ["가르니 신전", "게하르트 수도원", "세반 호수", "예레반 캐스케이드"]},
     {"name": "아제르바이잔", "region": "아시아", "capital": "바쿠", "flag": "🇦🇿", "attractions": ["바쿠 플레임 타워", "고부스탄 암각화", "바쿠 올드 시티", "헤이다르 알리예프 센터"]},
     {"name": "동티모르", "region": "아시아", "capital": "딜리", "flag": "🇹🇱", "attractions": ["딜리 크리스토 레이 동상", "아타우로 섬", "자코 섬", "라멜라우 산"]},
-    {"name": "몰디브", "region": "아시아", "capital": "말레", "flag": "🇲🇻", "attractions": ["말레 아톨 리조트", "바 아톨", "마푸시 섬", "화이트 샌드 비치"]},
 
     # 유럽 (44개국)
     {"name": "프랑스", "region": "유럽", "capital": "파리", "flag": "🇫🇷", "attractions": ["에펠탑", "루브르 박물관", "베르사유 궁전", "몽마르트르"]},
@@ -103,7 +102,6 @@ UN_193_RAW_DATA = [
     {"name": "몬테네그로", "region": "유럽", "capital": "포드고리차", "flag": "🇲🇪", "attractions": ["코토르 만", "스베티 스테판", "두르미토르 국립공원", "오스트로그 수도원"]},
     {"name": "벨라루스", "region": "유럽", "capital": "민스크", "flag": "🇧🇾", "attractions": ["미르 성", "네스비시 궁전", "민스크 독립광장", "브레스트 요새"]},
     {"name": "몰도바", "region": "유럽", "capital": "키시너우", "flag": "🇲🇩", "attractions": ["크리코바 와이너리", "오르헤이울 베키", "키시너우 승전가", "밀레스티 미치 와이너리"]},
-    {"name": "산마리노", "region": "유럽", "capital": "산마리노", "flag": "🇸🇲", "attractions": ["구스타 성채", "티타노산", "산마리노 대성당", "공화국 광장"]},
 
     # 아메리카 (35개국)
     {"name": "미국", "region": "아메리카", "capital": "워싱턴 D.C.", "flag": "🇺🇸", "attractions": ["자유의 여신상", "그랜드 캐니언", "옐로스톤 국립공원", "타임스 스퀘어"]},
@@ -238,6 +236,25 @@ region_filter = st.sidebar.selectbox(
 )
 
 search_query = st.text_input("찾고 싶은 국가 이름을 입력하세요 (예: 대한민국, 프랑스, 미국, 이집트)", "")
+
+# 🎉 이스터에그: "포르투갈" 검색 시 발동
+clean_query = search_query.strip()
+if "포르투갈" in clean_query or clean_query.lower() in ["portugal", "ronaldo", "호날두"]:
+    st.balloons()
+    st.snow()
+    
+    # 이스터에그 커스텀 가너 레이아웃
+    st.markdown("""
+        <div style="background-color: #063A1E; padding: 20px; border-radius: 15px; text-align: center; border: 3px solid #DA291C; margin-bottom: 25px;">
+            <h1 style="color: #FFC72C; margin: 0; font-size: 3em;">⚽ SIUUUUUUU! ⚽</h1>
+            <h3 style="color: white; margin-top: 10px;">신이 내린 축구의 신, 호날두의 고향 '포르투갈'에 오신 것을 환영합니다!</h3>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    col_ronaldo1, col_ronaldo2, col_ronaldo3 = st.columns([1, 2, 1])
+    with col_ronaldo2:
+        # 호날두 SIU 세레머니 GIF/이미지
+        st.image("https://media.giphy.com/media/r1IMagqoCMwAORVGgu/giphy.gif", caption="Siiiiiúuuuuuuu!!", use_container_width=True)
 
 # 필터링
 filtered_db = {}
