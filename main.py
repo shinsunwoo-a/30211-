@@ -244,7 +244,7 @@ if "포르투갈" in clean_query or clean_query.lower() in ["portugal", "ronaldo
     st.image("https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg", caption="CR7 - 포르투갈의 전설", width=400)
     st.success("포르투갈과 크리스티아누 호날두의 명소를 탐색할 준비가 되었습니다!")
 
-# 국가 검색 및 필터링 로직 구현부 (이어서 작성될 본래 기능 영역)
+# 국가 검색 및 필터링 로직 구현부
 filtered_countries = []
 for name, info in db.items():
     # 대륙 필터
@@ -261,6 +261,6 @@ for name, info in db.items():
 st.write(f"검색 결과: 총 {len(filtered_countries)}개국")
 for country in filtered_countries:
     st.markdown(f"### {country['flag']} {country['name']} ({country['region']})")
-    st.write(수도:=f"수도: {country['capital']}")
+    st.write(f"수도: {country['capital']}")
     st.write(f"추천 관광지: {', '.join(country['attractions'])}")
     st.write("---")
