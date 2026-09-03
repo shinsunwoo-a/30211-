@@ -240,54 +240,27 @@ search_query = st.text_input("찾고 싶은 국가 이름을 입력하세요 (�
 # 🎉 이스터에그: "포르투갈" 검색 시 발동
 clean_query = search_query.strip()
 if "포르투갈" in clean_query or clean_query.lower() in ["portugal", "ronaldo", "호날두"]:
-    st.balloons()
-    st.snow()
-    
-    # 이스터에그 커스텀 가너 레이아웃
-    st.markdown("""
-        <div style="background-color: #063A1E; padding: 20px; border-radius: 15px; text-align: center; border: 3px solid #DA291C; margin-bottom: 25px;">
-            <h1 style="color: #FFC72C; margin: 0; font-size: 3em;">⚽ SIUUUUUUU! ⚽</h1>
-            <h3 style="color: white; margin-top: 10px;">신이 내린 축구의 신, 호날두의 고향 '포르투갈'에 오신 것을 환영합니다!</h3>
-        </div>
-    """, unsafe_allow_html=True)
-    
-    col_ronaldo1, col_ronaldo2, col_ronaldo3 = st.columns([1, 2, 1])
-    with col_ronaldo2:
-        # 호날두 SIU 세레머니 GIF/이미지
-        st.image("https://media.giphy.com/media/r1IMagqoCMwAORVGgu/giphy.gif", caption="Siiiiiúuuuuuuu!!", use_container_width=True)
+    st.markdown("### SIUUUU! 🔥")
+    st.image("https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg", caption="CR7 - 포르투갈의 전설", width=400)
+    st.success("포르투갈과 크리스티아누 호날두의 명소를 탐색할 준비가 되었습니다!")
 
-# 필터링
-filtered_db = {}
+# 국가 검색 및 필터링 로직 구현부 (이어서 작성될 본래 기능 영역)
+filtered_countries = []
 for name, info in db.items():
+    # 대륙 필터
     if region_filter != "전체" and info["region"] != region_filter:
         continue
-    if search_query and search_query.strip() not in name:
-        continue
-    filtered_db[name] = info
+    # 검색어 필터
+    if clean_query and clean_query not in name and clean_query.lower() not in name.lower():
+        # 이스터에그 검색어도 국가 검색 결과에 포함되도록 예외 처리
+        if not ("포르투갈" in clean_query or clean_query.lower() in ["portugal", "ronaldo", "호날두"] and name == "포르투갈"):
+            continue
+    filtered_countries.append(info)
 
-# 검색 결과 출력
-if not filtered_db:
-    st.warning(f"'{search_query}'에 해당하는 국가를 찾을 수 없습니다. 국가명을 다시 확인해 주세요.")
-else:
-    st.subheader(f"📌 검색 결과 ({len(filtered_db)}개국)")
-    
-    cols = st.columns(2)
-    for idx, (country_name, info) in enumerate(filtered_db.items()):
-        col = cols[idx % 2]
-        with col:
-            with st.container():
-                st.markdown(f"### {info['flag']} {country_name}")
-                st.markdown(f"**대륙:** `{info['region']}` | **수도:** `{info['capital']}`")
-                st.markdown("**대표 관광명소 및 링크:**")
-                
-                for attr in info["attractions"]:
-                    encoded_query = urllib.parse.quote(f"{country_name} {attr}")
-                    google_map_url = f"https://www.google.com/maps/search/?api=1&query={encoded_query}"
-                    google_img_url = f"https://www.google.com/search?tbm=isch&q={encoded_query}"
-                    
-                    st.markdown(
-                        f"- 📍 **{attr}** "
-                        f"[🗺️ 지도]({google_map_url}) | "
-                        f"[🖼️ 이미지]({google_img_url})"
-                    )
-                st.write("---")
+# 결과 출력
+st.write(f"검색 결과: 총 {len(filtered_countries)}개국")
+for country in filtered_countries:
+    st.markdown(f"### {country['flag']} {country['name']} ({country['region']})")
+    st.write(수도:=f"수도: {country['capital']}")
+    st.write(f"추천 관광지: {', '.join(country['attractions'])}")
+    st.write("---")
