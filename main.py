@@ -7,9 +7,21 @@ st.set_page_config(
     layout="wide"
 )
 
-# 193개 UN 회원국 전체 데이터 (포르투갈 상세 관광지 반영)
+# 193개 UN 회원국 전체 데이터 (포르투갈 강제 상단 배치 및 상세 관광지 완벽 포함)
 UN_193_RAW_DATA = [
-    {"name": "포르투갈", "region": "유럽", "capital": "리스본", "flag": "🇵🇹", "attractions": ["리스본 벨렝 탑", "신트라 페나 궁전", "포르투 도루 강 & 동 루이스 1세 다리", "호카 곶", "렐루 서점"]},
+    {
+        "name": "포르투갈", 
+        "region": "유럽", 
+        "capital": "리스본", 
+        "flag": "🇵🇹", 
+        "attractions": [
+            "리스본 벨렝 탑 (Torre de Belem)", 
+            "신트라 페나 궁전 (Palacio da Pena)", 
+            "포르투 도루 강 & 동 루이스 1세 다리", 
+            "호카 곶 (Cabo da Roca)", 
+            "렐루 서점 (Livraria Lello)"
+        ]
+    },
     {"name": "대한민국", "region": "아시아", "capital": "서울", "flag": "🇰🇷", "attractions": ["경복궁", "남산서울타워", "해운대 해수욕장", "제주 한라산"]},
     {"name": "일본", "region": "아시아", "capital": "도쿄", "flag": "🇯🇵", "attractions": ["도쿄타워", "교토 기요미즈데라", "오사카성", "후지산"]},
     {"name": "중화인민공화국", "region": "아시아", "capital": "베이징", "flag": "🇨🇳", "attractions": ["만리장성", "자금성", "병마용갱", "계림 산수"]},
@@ -67,20 +79,25 @@ if "포르투갈" in clean_query or clean_query.lower() in ["portugal", "ronaldo
     st.image("https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg", caption="CR7 - 포르투갈의 전설", width=400)
     st.success("포르투갈 검색이 감지되었습니다! 아래 카드에서 상세 관광지를 확인하세요.")
 
-# 필터링 로직
+# 필터링 로직 (검색어가 없거나 '포르투갈' 관련 검색어일 때 포르투갈 무조건 포함 보장)
 filtered_countries = []
 for name, info in db.items():
     if region_filter != "전체" and info["region"] != region_filter:
-        continue
-    if clean_query and clean_query not in name and clean_query.lower() not in name.lower():
-        if not ("포르투갈" in clean_query or clean_query.lower() in ["portugal", "ronaldo", "호날두"] and name == "포르투갈"):
+        # 단, 필터가 유럽이거나 전체일 때 포르투갈은 강제로 매칭되도록 예외 처리
+        if not (name == "포르투갈" and region_filter in ["유럽", "전체"]):
             continue
+    
+    if clean_query:
+        is_portugal_match = ("포르투갈" in clean_query or clean_query.lower() in ["portugal", "ronaldo", "호날두"]) and name == "포르투갈"
+        if not (clean_query in name or clean_query.lower() in name.lower() or is_portugal_match):
+            continue
+            
     filtered_countries.append(info)
 
 # 결과 출력 (박스 / 카드형 UI 적용)
 st.write(f"검색 결과: 총 {len(filtered_countries)}개국")
 
-# 2열 그리드로 박스 배치
+# 개별 관광지 요소를 각각 독립된 서브 박스로 시각화하기 위해 각 국가 카드를 확장성 있게 구성
 cols = st.columns(2)
 for idx, country in enumerate(filtered_countries):
     col = cols[idx % 2]
@@ -88,7 +105,9 @@ for idx, country in enumerate(filtered_countries):
         with st.container(border=True):
             st.markdown(f"### {country['flag']} {country['name']}")
             st.markdown(f"**📍 대륙:** {country['region']} &nbsp;&nbsp;|&nbsp;&nbsp; **🏛️ 수도:** {country['capital']}")
-            st.markdown("**✨ 추천 관광지 리스트**")
+            st.markdown("---")
+            st.markdown("**✨ 추천 관광지 리스트 (박스형)**")
             
+            # 관광지 하나하나를 개별 박스(st.info 또는 작은 컨테이너) 형태로 렌더링
             for spot in country['attractions']:
-                st.markdown(f"- 🔸 {spot}")
+                st.info(f"📍 {spot}")
